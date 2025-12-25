@@ -11,32 +11,21 @@
   <h1>Scan Entry QR</h1>
   <div id="reader" style="width:300px;margin:auto"></div>
 
-  <script>
-    const SCRIPT_URL =
-      "https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec";
+<script>
+  const scanner = new Html5Qrcode("reader");
 
-    function onScanSuccess(decodedText) {
-      try {
-        const url = new URL(decodedText);
-        const token = url.searchParams.get("token");
+  function onScanSuccess(decodedText) {
+    // 🔍 SHOW EXACT QR CONTENT
+    document.body.innerHTML =
+      "<h2>QR CONTENT:</h2><pre>" + decodedText + "</pre>";
+  }
 
-        if (!token) {
-          alert("Invalid QR");
-          return;
-        }
+  scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    onScanSuccess
+  );
+</script>
 
-        window.location.href = SCRIPT_URL + "?token=" + token;
-      } catch (e) {
-        alert("Invalid QR format");
-      }
-    }
-
-    const scanner = new Html5Qrcode("reader");
-    scanner.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      onScanSuccess
-    );
-  </script>
 </body>
 </html>
