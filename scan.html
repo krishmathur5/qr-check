@@ -11,56 +11,72 @@
       color: white;
       font-family: system-ui, sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 20px;
     }
     #reader {
       width: 300px;
-      margin: auto;
+      margin: 20px auto;
     }
-    button {
+    #verifyBtn {
+      display: none;
       margin-top: 20px;
-      font-size: 18px;
-      padding: 10px 20px;
+      font-size: 22px;
+      padding: 14px 28px;
+      background: #00c853;
+      border: none;
+      border-radius: 8px;
+      color: black;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
   <h1>Scan Entry QR</h1>
+
   <div id="reader"></div>
 
-  <!-- Explicit form -->
-  <form id="verifyForm"
-        method="POST"
-        action="https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec">
-    <input type="hidden" name="token" id="tokenField">
-    <!-- Fallback button (browser likes this) -->
-    <button type="submit" style="display:none">Submit</button>
-  </form>
+  <p id="status">Waiting for scan…</p>
+
+  <button id="verifyBtn">VERIFY ENTRY</button>
 
   <script>
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec";
+
+    let scannedToken = null;
+
     function onScanSuccess(decodedText) {
       try {
         const url = new URL(decodedText);
         const token = url.searchParams.get("token");
 
         if (!token) {
-          alert("Invalid QR");
+          document.getElementById("status").innerText = "❌ Invalid QR";
           return;
         }
 
-        // Fill token
-        document.getElementById("tokenField").value = token;
+        scannedToken = token;
 
-        // 🔴 IMPORTANT: force navigation
-        document.getElementById("verifyForm").submit();
+        document.getElementById("status").innerText =
+          "QR detected. Tap VERIFY ENTRY.";
+
+        document.getElementById("verifyBtn").style.display = "inline-block";
+
+        scanner.stop(); // stop camera after scan
 
       } catch (e) {
-        alert("Invalid QR format");
+        document.getElementById("status").innerText = "❌ Invalid QR format";
       }
     }
 
-    const scanner = new Html5Qrcode("reader");
+    document.getElementById("verifyBtn").onclick = function () {
+      // ✅ user-initiated navigation (browser allows this)
+      window.location.href = SCRIPT_URL + "?token=" + scannedToken;
+    };
 
+    const scanner = new Html5Qrcode("reader");
     scanner.start(
       { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
