@@ -16,6 +16,11 @@
       width: 300px;
       margin: auto;
     }
+    button {
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 20px;
+    }
   </style>
 </head>
 
@@ -23,9 +28,13 @@
   <h1>Scan Entry QR</h1>
   <div id="reader"></div>
 
-  <form id="verifyForm" method="POST"
+  <!-- Explicit form -->
+  <form id="verifyForm"
+        method="POST"
         action="https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec">
     <input type="hidden" name="token" id="tokenField">
+    <!-- Fallback button (browser likes this) -->
+    <button type="submit" style="display:none">Submit</button>
   </form>
 
   <script>
@@ -39,7 +48,10 @@
           return;
         }
 
+        // Fill token
         document.getElementById("tokenField").value = token;
+
+        // 🔴 IMPORTANT: force navigation
         document.getElementById("verifyForm").submit();
 
       } catch (e) {
@@ -48,6 +60,7 @@
     }
 
     const scanner = new Html5Qrcode("reader");
+
     scanner.start(
       { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
