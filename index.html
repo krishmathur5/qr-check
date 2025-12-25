@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QR Check</title>
+</head>
+<body>
+  <p>Checking ticket…</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (!token) {
+      document.body.innerHTML = "<h1>❌ Invalid QR</h1>";
+    } else {
+      // REDIRECT TO APPS SCRIPT
+      window.location.href =
+        "https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec?token=" + token;
+    }
+  </script>
+</body>
+</html>
