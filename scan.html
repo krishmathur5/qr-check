@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Event QR Scanner</title>
+
+  <!-- QR Scanner library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #000;
+      color: #fff;
+    }
+    #reader {
+      width: 300px;
+      margin: auto;
+    }
+    .ok { color: #00ff6a; font-size: 2em; }
+    .bad { color: #ff4d4d; font-size: 2em; }
+  </style>
+</head>
+
+<body>
+  <h1>Scan Entry QR</h1>
+  <div id="reader"></div>
+  <div id="result"></div>
+
+  <script>
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbw2mjnx2K7jihpbgCo_bcwXTYre30XR28BCAnbistaasRFOaeYNKXOGTWPXEgBaw_Xh/exec";
+
+    function onScanSuccess(decodedText) {
+      // Extract token from QR URL
+      const url = new URL(decodedText);
+      const token = url.searchParams.get("token");
+
+      if (!token) {
+        show("❌ Invalid QR", false);
+        return;
+      }
+
+      fetch(SCRIPT_URL + "?token=" + token)
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById("result").innerHTML = html;
+          setTimeout(startScan, 2000); // resume scanning
+        })
+        .catch(() => show("❌ Network error", false));
+    }
+
+    function show(msg, ok) {
+      document.getElementById("result").innerHTML =
+        `<div class="${ok ? "ok" : "bad"}">${msg}</div>`;
+    }
+
+    const scanner = new Html5Qrcode("reader");
+
+    function startScan() {
+      document.getElementById("result").innerHTML = "";
+      scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+      );
+    }
+
+    startScan();
+  </script>
+</body>
+</html>
