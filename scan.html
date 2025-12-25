@@ -1,41 +1,15 @@
-<!-- VERSION 3 - NO FETCH - REDIRECT ONLY -->
-
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
+  <!-- VERSION 3 - NO FETCH - REDIRECT ONLY -->
   <title>Event QR Scanner</title>
-
   <script src="https://unpkg.com/html5-qrcode"></script>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: black;
-      color: white;
-      text-align: center;
-    }
-    h1 {
-      margin: 16px 0;
-    }
-    #reader {
-      width: 300px;
-      margin: auto;
-    }
-    #note {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #aaa;
-    }
-  </style>
 </head>
 
-<body>
+<body style="background:black;color:white;text-align:center;font-family:sans-serif">
   <h1>Scan Entry QR</h1>
-  <div id="reader"></div>
-  <div id="note">Camera access required</div>
+  <div id="reader" style="width:300px;margin:auto"></div>
 
   <script>
     const SCRIPT_URL =
@@ -51,16 +25,13 @@
           return;
         }
 
-        // 🚀 REDIRECT — no fetch, no CORS
         window.location.href = SCRIPT_URL + "?token=" + token;
-
       } catch (e) {
         alert("Invalid QR format");
       }
     }
 
     const scanner = new Html5Qrcode("reader");
-
     scanner.start(
       { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
